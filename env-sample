@@ -1,0 +1,9 @@
+# save this file as .env
+
+DB_USERNAME=
+DB_PASSWORD=
+DB_NAME=
+
+API_USERNAME=
+API_PASSWORD=
+

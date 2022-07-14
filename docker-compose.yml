@@ -1,0 +1,33 @@
+version: '3.1'
+services:
+  api:
+    container_name: nsx-fw-cmdb-api
+    depends_on:
+      - db
+    build: ./api
+    environment:
+      API_USERNAME: "${API_USERNAME}"
+      API_PASSWORD: "${API_PASSWORD}"
+      DB_USERNAME: "${DB_USERNAME}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+    restart: always
+    volumes:
+      - ./api:/api
+    ports:
+      - "8000:8000"
+  db:
+    container_name: nsx-fw-cmdb-db
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-db-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+volumes:
+  postgres-db-data:
