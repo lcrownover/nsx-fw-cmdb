@@ -28,6 +28,7 @@ class Entry(BaseModel):
     source: str
     service: str
     action: str = "allow"
+    input_source: str
 
     _validate_name = validator("vmname", allow_reuse=True)(validate_vmname)
     _validate_action = validator("action", allow_reuse=True)(validate_action)
@@ -92,10 +93,11 @@ def db_get_entry_id(entry: Entry) -> int:
     comment = %s AND
     source = %s AND
     service = %s AND
-    action = %s
+    action = %s AND
+    input_source = %s
     """
     cur.execute(
-        sql, (entry.vmname, entry.comment, entry.source, entry.service, entry.action)
+        sql, (entry.vmname, entry.comment, entry.source, entry.service, entry.action, entry.input_source)
     )
     data = cur.fetchone()
     if data:
@@ -125,9 +127,9 @@ def db_insert_entry(entry: Entry) -> int:
     if entry_id:
         return entry_id
     li(f"inserting entry '{entry}'")
-    sql = f"INSERT INTO entries (vmname, comment, source, service, action) VALUES (%s, %s, %s, %s, %s) RETURNING id"
+    sql = f"INSERT INTO entries (vmname, comment, source, service, action, input_source) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id"
     cur.execute(
-        sql, (entry.vmname, entry.comment, entry.source, entry.service, entry.action)
+        sql, (entry.vmname, entry.comment, entry.source, entry.service, entry.action, entry.input_source)
     )
     entry_id = cur.fetchone()[0]
     conn.commit()
@@ -263,6 +265,17 @@ async def create_entry(entry: Entry) -> Entry:
 async def get_entries(vmname: str) -> list[Entry]:
     try:
         return db_get_entries_for_vm(vmname)
+    except:
+        raise HTTPException(status_code=404, detail="No entries not found")
+
+
+@app.delete("/entries/{vmname}/", response_model=list[Entry])
+async def delete_entries(vmname: str) -> list[Entry]:
+    try:
+        entries = db_get_entries_for_vm(vmname)
+        for entry in entries:
+            db_delete_entry(entry.id)
+        return entries
     except:
         raise HTTPException(status_code=404, detail="No entries not found")
 
