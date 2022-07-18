@@ -44,7 +44,7 @@ class Entry(BaseModel):
         )
 
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 def li(msg: str):
@@ -69,6 +69,7 @@ db_port = 5432
 db_name = "cmdb"
 
 app = FastAPI()
+
 
 try:
     conn = psycopg2.connect(
@@ -183,49 +184,49 @@ def db_delete_entry(entry_id: int) -> None:
     conn.commit()
 
 
-pre_data = [
-    Entry(
-        vmname="lctest-pre-data1",
-        comment="test rule 1",
-        source="mem_uonet_DATA",
-        service="TCP:5668",
-        action="allow",
-    ),
-    Entry(
-        vmname="lctest-pre-data1",
-        comment="test rule 2",
-        source="mem_uonet_DATA",
-        service="TCP:5667",
-        action="reject",
-    ),
-    Entry(
-        vmname="lctest-pre-data1",
-        comment="test rule 3",
-        source="mem_deleteme-lctest_DATA",
-        service="SSH",
-        action="allow",
-    ),
-    Entry(
-        vmname="lctest-pre-data2",
-        comment="test rule 1",
-        source="184.171.150.123",
-        service="SSH",
-    ),
-    Entry(
-        vmname="lctest-pre-data2",
-        comment="test rule 2",
-        source="128.223.60.0/24",
-        service="HTTPS",
-    ),
-]
-
-# prepopulate data
-for entry in pre_data:
-    ld(f"populating pre_data: {entry}")
-    try:
-        entry_id = db_get_entry_id(entry)
-    except EntryNotFoundError:
-        entry_id = db_insert_entry(entry)
+#pre_data = [
+#    Entry(
+#        vmname="lctest-pre-data1",
+#        comment="test rule 1",
+#        source="mem_uonet_DATA",
+#        service="TCP:5668",
+#        action="allow",
+#    ),
+#    Entry(
+#        vmname="lctest-pre-data1",
+#        comment="test rule 2",
+#        source="mem_uonet_DATA",
+#        service="TCP:5667",
+#        action="reject",
+#    ),
+#    Entry(
+#        vmname="lctest-pre-data1",
+#        comment="test rule 3",
+#        source="mem_deleteme-lctest_DATA",
+#        service="SSH",
+#        action="allow",
+#    ),
+#    Entry(
+#        vmname="lctest-pre-data2",
+#        comment="test rule 1",
+#        source="184.171.150.123",
+#        service="SSH",
+#    ),
+#    Entry(
+#        vmname="lctest-pre-data2",
+#        comment="test rule 2",
+#        source="128.223.60.0/24",
+#        service="HTTPS",
+#    ),
+#]
+#
+## prepopulate data
+#for entry in pre_data:
+#    ld(f"populating pre_data: {entry}")
+#    try:
+#        entry_id = db_get_entry_id(entry)
+#    except EntryNotFoundError:
+#        entry_id = db_insert_entry(entry)
 
 ###
 #
