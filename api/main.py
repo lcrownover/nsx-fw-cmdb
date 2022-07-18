@@ -34,7 +34,7 @@ class Entry(BaseModel):
     _validate_action = validator("action", allow_reuse=True)(validate_action)
 
     @classmethod
-    def from_db_row(cls, row: tuple[str, str, str, str, str, str]):
+    def from_db_row(cls, row: tuple[str, str, str, str, str, str, str]):
         return cls(
             id=row[0],
             vmname=row[1],
@@ -42,7 +42,11 @@ class Entry(BaseModel):
             source=row[3],
             service=row[4],
             action=row[5],
+            input_source=row[6],
         )
+
+class Status(BaseModel):
+    ok: bool
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -229,6 +233,16 @@ def db_delete_entry(entry_id: int) -> None:
 #        entry_id = db_get_entry_id(entry)
 #    except EntryNotFoundError:
 #        entry_id = db_insert_entry(entry)
+
+
+###
+# Status endpoint
+@app.get("/status/")
+async def get_status():
+    return Status(ok=True)
+#
+###
+
 
 ###
 #
