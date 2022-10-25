@@ -134,7 +134,7 @@ def db_insert_entry(entry: Entry) -> int:
     if entry_id:
         return entry_id
     li(f"inserting entry '{entry}'")
-    sql = f"INSERT INTO entries (vmname, comment, source, destination, service, action, input_source) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id"
+    sql = f"INSERT INTO entries (vmname, comment, source, destination, service, action, input_source) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id"
     cur.execute(
         sql, (entry.vmname, entry.comment, entry.source, entry.destination, entry.service, entry.action, entry.input_source)
     )
