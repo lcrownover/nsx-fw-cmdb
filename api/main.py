@@ -26,6 +26,7 @@ class Entry(BaseModel):
     vmname: str
     comment: str
     source: str
+    destination: str
     service: str
     action: str = "allow"
     input_source: str
@@ -40,9 +41,10 @@ class Entry(BaseModel):
             vmname=row[1],
             comment=row[2],
             source=row[3],
-            service=row[4],
-            action=row[5],
-            input_source=row[6],
+            destination=row[4],
+            service=row[5],
+            action=row[6],
+            input_source=row[7],
         )
 
 class Status(BaseModel):
@@ -96,12 +98,13 @@ def db_get_entry_id(entry: Entry) -> int:
     vmname = %s AND
     comment = %s AND
     source = %s AND
+    destination = %s AND
     service = %s AND
     action = %s AND
     input_source = %s
     """
     cur.execute(
-        sql, (entry.vmname, entry.comment, entry.source, entry.service, entry.action, entry.input_source)
+        sql, (entry.vmname, entry.comment, entry.source, entry.destination, entry.service, entry.action, entry.input_source)
     )
     data = cur.fetchone()
     if data:
@@ -131,9 +134,9 @@ def db_insert_entry(entry: Entry) -> int:
     if entry_id:
         return entry_id
     li(f"inserting entry '{entry}'")
-    sql = f"INSERT INTO entries (vmname, comment, source, service, action, input_source) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id"
+    sql = f"INSERT INTO entries (vmname, comment, source, destination, service, action, input_source) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id"
     cur.execute(
-        sql, (entry.vmname, entry.comment, entry.source, entry.service, entry.action, entry.input_source)
+        sql, (entry.vmname, entry.comment, entry.source, entry.destination, entry.service, entry.action, entry.input_source)
     )
     entry_id = cur.fetchone()[0]
     conn.commit()
