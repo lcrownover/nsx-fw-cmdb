@@ -35,7 +35,7 @@ class Entry(BaseModel):
     _validate_action = validator("action", allow_reuse=True)(validate_action)
 
     @classmethod
-    def from_db_row(cls, row: tuple[str, str, str, str, str, str, str]):
+    def from_db_row(cls, row: tuple[str, str, str, str, str, str, str, str]):
         return cls(
             id=row[0],
             vmname=row[1],
